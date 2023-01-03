@@ -82,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
             arrayList.add(String.valueOf(one.getPay_time()));//7
             arrayList.add(String.valueOf(one.getPost()));//8
             arrayList.add(String.valueOf(one.getIspaid()));//9
+            arrayList.add(String.valueOf(one.getStatus()));
             orderJson.add((JSONArray) JSONArray.toJSON(arrayList));
         }
         return JSON.toJSONString(orderJson, SerializerFeature.BrowserCompatible);
@@ -134,6 +135,7 @@ public class OrderServiceImpl implements OrderService {
             arrayList.add(String.valueOf(one.getPay_time()));
             arrayList.add(String.valueOf(one.getPost()));
             arrayList.add(String.valueOf(one.getIspaid()));
+            arrayList.add(String.valueOf(one.getStatus()));
             orderJson.add((JSONArray) JSONArray.toJSON(arrayList));
         }
         return JSON.toJSONString(orderJson, SerializerFeature.BrowserCompatible);
@@ -210,6 +212,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public boolean cancelOrder(int order_id) {
+        return orderDao.cancelOrder(order_id);
+    }
+
+    @Override
     public String GetFailedOrdersByUser_id(int user_id) {
         List<Order> all = orderDao.getAllUserOrders(user_id);
         for (int i = 0; i < all.size(); i++) {
@@ -256,6 +263,7 @@ public class OrderServiceImpl implements OrderService {
             arrayList.add(String.valueOf(one.getPay_time()));//7
             arrayList.add(String.valueOf(one.getPost()));//8
             arrayList.add(String.valueOf(one.getIspaid()));//9
+            arrayList.add(String.valueOf(one.getStatus()));
             orderJson.add((JSONArray) JSONArray.toJSON(arrayList));
         }
         return JSON.toJSONString(orderJson, SerializerFeature.BrowserCompatible);

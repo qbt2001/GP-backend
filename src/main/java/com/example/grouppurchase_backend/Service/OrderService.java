@@ -10,6 +10,7 @@ public interface OrderService {
     String GetOrderAmountByGroup_id(int group_id);
     String GetOrderTotalByGroup_id(int group_id);
     boolean drawbackOrder(int order_id);
+    boolean cancelOrder(int order_id);
 
     String GetFailedOrdersByUser_id(int user_id);
 }

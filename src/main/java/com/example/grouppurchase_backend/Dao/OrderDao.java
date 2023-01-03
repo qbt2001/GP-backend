@@ -8,6 +8,10 @@ public interface OrderDao {
     String createOrder(int group_id, int commodity_id, int user_id,  int commodity_amount, String pay_time);
 
     void deleteOrder(int order_id);
+
+    boolean refund(int order_id);
+
+    boolean cancelOrder(int order_id);
     Order getOne(int order_id);
     List<Order> getAllGroupOrders(int group_id);
 

@@ -43,4 +43,8 @@ public class Order {
 
     @Column(name = "ispaid")
     private int ispaid;
+
+    //0 取消，1既未支付，也未取消
+    @Column(name = "status")
+    private int status;
 }

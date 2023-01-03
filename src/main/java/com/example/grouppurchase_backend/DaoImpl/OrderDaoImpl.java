@@ -54,11 +54,11 @@ public class OrderDaoImpl implements OrderDao {
         Commodity curCommodity = commodityRepository.getCommodityByCommodity_id(commodity_id);
         User curUser = userRepository.findByUser_id(user_id);
         User headUser = userRepository.findByUser_id(curGroup.getHead());
-        int userBalance = curUser.getBalance();
+//        int userBalance = curUser.getBalance();
         int unit_price = curCommodity.getPrice();
         int money = unit_price * commodity_amount;
-        if (userBalance < money)
-            return "Money";
+//        if (userBalance < money)
+//            return "Money";
         int commodityInventory = curCommodity.getInventory();
         boolean commodityMiao = curCommodity.isMiao();
         if (commodityInventory < commodity_amount && !commodityMiao)
@@ -68,8 +68,8 @@ public class OrderDaoImpl implements OrderDao {
         int checkTimeRes = checkForTime(start, end, pay_time);
         if (checkTimeRes != 0)
             return "Time";
-        curUser.setBalance(userBalance - money);           //钱的流动
-        headUser.setBalance(headUser.getBalance() + money);
+//        curUser.setBalance(userBalance - money);           //钱的流动
+//        headUser.setBalance(headUser.getBalance() + money);
         if (!commodityMiao) curCommodity.setInventory(commodityInventory - commodity_amount);//非秒杀情况下，库存减少
         if (!Objects.equals(headUser, curUser)) {
             String follower = curGroup.getFollower();
@@ -95,17 +95,23 @@ public class OrderDaoImpl implements OrderDao {
         String post = groupRepository.getGroupByGroup_id(group_id).getPost();
         ord.setPost(post);
         ord.setMoney(money);
-        ord.setIspaid(1);
+        ord.setIspaid(0);
+        ord.setStatus(1);
         orderRepository.save(ord);
-        return "success";
+        String order_id = String.valueOf(ord.getOrder_id());
+        return order_id;
     }
 
     @Override
-    public void deleteOrder(int order_id) {
+    public boolean refund(int order_id){
         Order order = getOne(order_id);
         int user_id = order.getUser_id();
         int money = order.getMoney();
         int group_id = order.getGroup_id();
+        //退款改为已取消状态
+        order.setStatus(0);
+        orderRepository.save(order);
+
         Group group = groupRepository.getGroupByGroup_id(group_id);
         int head_id = group.getHead();
         User head = userRepository.findByUser_id(head_id);
@@ -118,7 +124,29 @@ public class OrderDaoImpl implements OrderDao {
         head.setBalance(old_head);
         userRepository.save(user);
         userRepository.save(head);
+        return true;
+    }
+
+    @Override
+    public void deleteOrder(int order_id) {
+
         orderRepository.delete(getOne(order_id));
+    }
+
+    @Override
+    public boolean cancelOrder(int order_id) {
+        Order curOrder = getOne(order_id);
+        if (curOrder == null)
+            return false;
+
+        Commodity curCom = commodityRepository.getCommodityByCommodity_id(curOrder.getCommodity_id());
+        int orderAmount = curOrder.getCommodity_amount();
+        curCom.setInventory(curCom.getInventory() + orderAmount); //修改商品库存
+
+        curOrder.setStatus(0); //设置为取消状态
+        commodityRepository.save(curCom);
+        orderRepository.save(curOrder);
+        return true;
     }
 
     @Override
@@ -149,7 +177,7 @@ public class OrderDaoImpl implements OrderDao {
         Commodity curCom = commodityRepository.getCommodityByCommodity_id(curOrder.getCommodity_id());
         int orderAmount = curOrder.getCommodity_amount();
         curCom.setInventory(curCom.getInventory() + orderAmount);
-        deleteOrder(order_id);
+        refund(order_id);
         return true;
     }
 }

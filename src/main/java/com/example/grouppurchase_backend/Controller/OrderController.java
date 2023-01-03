@@ -38,6 +38,15 @@ public class OrderController {
         return orderService.GetFailedOrdersByUser_id(user_id);
     }
 
+    @RequestMapping("/cancelOrder")
+    @ResponseBody
+    public boolean cancelOrder(@RequestBody Map map){
+        String tmp=String.valueOf(map.get("order_id"));
+        int order_id = Integer.parseInt(tmp);
+        return orderService.cancelOrder(order_id);
+    }
+
+
     @RequestMapping("/getUserOrder")
     @ResponseBody
     public String getOrdersByUser_id(@RequestBody Map map) {
@@ -90,7 +99,7 @@ public class OrderController {
         return orderService.GetOrderAmountByGroup_id(group_id);
     }
     @RequestMapping("/drawbackOrder") //取消订单 传进来body是oder_id
-    @ResponseBody                        // 返回 ture 删除成功  false 未找到该编号订单
+    @ResponseBody                        // 返回 true取消订单并退款，false未找到
     public boolean drawbackOrder(@RequestBody Map map)
     {
         String tmp=String.valueOf(map.get("order_id"));
