@@ -7,7 +7,9 @@ import com.example.grouppurchase_backend.Dao.CommodityDao;
 import com.example.grouppurchase_backend.Dao.GroupDao;
 import com.example.grouppurchase_backend.Dao.OrderDao;
 import com.example.grouppurchase_backend.Dao.UserDao;
+import com.example.grouppurchase_backend.Entity.Group;
 import com.example.grouppurchase_backend.Entity.Order;
+import com.example.grouppurchase_backend.Entity.User;
 import com.example.grouppurchase_backend.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -214,6 +216,28 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public boolean cancelOrder(int order_id) {
         return orderDao.cancelOrder(order_id);
+    }
+
+    @Override
+    public String payOrder(int order_id)
+    {
+        Order order=orderDao.getOne(order_id);
+        if (order.getIspaid()==1)
+            return "isPaid";
+
+        User user=userDao.findByUser_id(order.getUser_id());
+        int money=order.getMoney();
+        int userBalance=user.getBalance();
+        if (userBalance<money)
+            return "balance";
+
+        Group group=groupDao.getGroupByGroup_id(order.getGroup_id());
+        User head=userDao.findByUser_id(group.getHead());
+        int headBalance=head.getBalance();
+        user.setBalance(userBalance-money);
+        head.setBalance(headBalance+money);
+        order.setIspaid(1);
+        return "success";
     }
 
     @Override

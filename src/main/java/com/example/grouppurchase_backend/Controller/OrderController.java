@@ -106,6 +106,14 @@ public class OrderController {
         int order_id=Integer.parseInt(tmp);
         return orderService.drawbackOrder(order_id);
     }
+    @RequestMapping("/payOrder") //支付订单 传进来body是oder_id
+    @ResponseBody                        // 返回 isPaid 订单本来就已支付 balance 余额不足 success 支付成功
+    public String payOrder(@RequestBody Map map)
+    {
+        String tmp=String.valueOf(map.get("order_id"));
+        int order_id=Integer.parseInt(tmp);
+        return orderService.payOrder(order_id);
+    }
 }
 
 
