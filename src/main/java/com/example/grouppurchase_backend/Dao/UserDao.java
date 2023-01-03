@@ -15,5 +15,7 @@ public interface UserDao {
 
     List<User> getAllUsers();
 
+
+    boolean updateUserPassword(User user);
     void allEncode();
 }

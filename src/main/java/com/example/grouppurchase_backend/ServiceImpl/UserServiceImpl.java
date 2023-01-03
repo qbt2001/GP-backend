@@ -26,6 +26,25 @@ public class UserServiceImpl implements UserService {
     OrderDao orderDao;
 
     @Override
+    public boolean changePassword(int user_id,String originPassword,String newPassword) {
+        User user = userDao.findByUser_id(user_id);
+        if(user == null)
+            return false;   //user为空
+        Base64.Decoder decoder=Base64.getDecoder();
+        byte[] tmp=decoder.decode(user.getPassword());
+        String pwd=new String(tmp);
+        if (!Objects.equals(pwd, originPassword))
+            return false;    //密码错误
+
+        Base64.Encoder encoder=Base64.getEncoder();
+        String newPwd=encoder.encodeToString(newPassword.getBytes());  //对新密码加密
+        user.setPassword(newPwd);
+
+        return userDao.updateUserPassword(user);
+
+    }
+
+    @Override
     public String check(String user_name, String password) {
         User u = userDao.check(user_name);
         if (u == null)
@@ -114,4 +133,6 @@ public class UserServiceImpl implements UserService {
         }
         return JSON.toJSONString(con, SerializerFeature.BrowserCompatible);
     }
+
+
 }

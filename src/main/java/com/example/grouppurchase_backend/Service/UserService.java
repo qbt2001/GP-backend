@@ -12,4 +12,6 @@ public interface UserService {
     String getUsername(int user_id);
 
     String getUserPic();
+
+    boolean changePassword(int user_id,String originPassword, String newPassword);
 }

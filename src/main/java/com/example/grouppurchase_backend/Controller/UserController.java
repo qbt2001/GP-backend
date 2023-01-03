@@ -55,6 +55,21 @@ public class UserController {
             return "0";
     }
 
+    @RequestMapping("/ChangePassword")
+    @ResponseBody
+    public boolean changePassword(@RequestBody Map map)
+    {
+        String uid = String.valueOf(map.get("user_id"));
+        int user_id = Integer.parseInt(uid);
+        String originPassword = String.valueOf(map.get("originPassword"));
+        String newPassword = String.valueOf(map.get("newPassword"));
+        if(userService.changePassword(user_id,originPassword,newPassword))
+            return true;
+        else
+            return false;
+
+    }
+
     @RequestMapping("/GetSomeInfo")
     @ResponseBody
     public String getSomeInfo(@RequestBody Map map) {    //余额、发起数、参与数
