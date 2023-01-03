@@ -3,6 +3,7 @@ package com.example.grouppurchase_backend.Repository;
 import com.example.grouppurchase_backend.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -16,4 +17,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "from User where user_name like concat('%',:keyword,'%')")
     List<User> getUsersByUser_name(@Param("keyword") String keyword);
+
+//    @Modifying
+//    @Query(value="update User set User.password=:password where User.user_id=:user_id")
+//    int updateUserPassword(@Param("password")String password,@Param("user_id")int user_id);
+
 }

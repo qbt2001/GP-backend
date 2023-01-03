@@ -60,6 +60,16 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public boolean updateUserPassword(User user){
+
+        if(userRepository.save(user)!=null)
+            return true;
+        else
+            return false;
+
+    }
+
+    @Override
     public void allEncode() {
 //        Base64.Encoder encoder=Base64.getEncoder();
 //        List<User> all=getAllUsers();
