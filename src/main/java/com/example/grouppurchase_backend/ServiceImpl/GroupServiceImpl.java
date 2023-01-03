@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
@@ -71,10 +72,43 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
+    public String getTime()
+    {
+        Calendar cal=Calendar.getInstance();
+        int y=cal.get(Calendar.YEAR);
+        int m=cal.get(Calendar.MONTH)+1;
+        int d=cal.get(Calendar.DATE);
+        int h=cal.get(Calendar.HOUR_OF_DAY);
+        int mi=cal.get(Calendar.MINUTE);
+        int s=cal.get(Calendar.SECOND);
+        String time=y+"-"+
+                (m<10?"0"+m:""+m)+"-"+
+                (d<10?"0"+d:""+d)+" "+
+                (h<10?"0"+h:""+h)+":"+
+                (mi<10?"0"+mi:""+mi)+":"+
+                (s<10?"0"+s:""+s);
+        return time;
+    }
+
+    public List<Group> checkGroupTime(List<Group> all,boolean t)
+    {
+        List<Group> result=new ArrayList<>();
+        String time=getTime();
+        for (int i=0;i<all.size();i++)
+        {
+            Group group=all.get(i);
+            int state=timeCanFinish(group.getBegin_time(),group.getEnd_time(),time);
+            group.setState(state);
+            if (state!=2||t)
+                result.add(group);
+        }
+        return result;
+    }
+
     @Override
     public String getAllGroups() {
         List<Group> all = groupDao.getAllGroups();
-        return changeToString(all);
+        return changeToString(checkGroupTime(all,false));
     }
 
     @Override
@@ -98,6 +132,8 @@ public class GroupServiceImpl implements GroupService {
             arrayList.add(one.getEnd_time());//8
             arrayList.add(one.getLink());//9
 
+            arrayList.add(String.valueOf(one.getState()));
+
             for (int j = 0; j < commodities.size(); ++j) {
                 Commodity co = commodities.get(j);
                 arrayList.add(String.valueOf(co.getCommodity_id()));//10
@@ -120,13 +156,13 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public String getGroupsByHead_name(String KeyWord) {
         List<Group> found = groupDao.getGroupsByHead_name(KeyWord);
-        return changeToString(found);
+        return changeToString(checkGroupTime(found,true));
     }
 
     @Override
     public String getGroupsByGroup_name(String KeyWord) {
         List<Group> found = groupDao.getGroupsByGroup_name(KeyWord);
-        return changeToString(found);
+        return changeToString(checkGroupTime(found,true));
     }
 
     @Override
@@ -183,6 +219,10 @@ public class GroupServiceImpl implements GroupService {
         arrayList.add(group.getEnd_time());//8
         arrayList.add(group.getLink());//9
 
+        String time=getTime();
+        group.setState(timeCanFinish(group.getBegin_time(),group.getEnd_time(),time));
+        arrayList.add(String.valueOf(group.getState()));
+
         for (int j = 0; j < commodities.size(); ++j) {
             Commodity co = commodities.get(j);
             arrayList.add(String.valueOf(co.getCommodity_id()));//10
@@ -203,13 +243,13 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public String getGroupsByHead_id(Integer head_id) {
         List<Group> all = groupDao.getGroupsByHead_id(head_id);
-        return changeToString(all);
+        return changeToString(checkGroupTime(all,true));
     }
 
     @Override
     public String getGroupsByFollower_id(Integer follower_id) {
         List<Group> all = groupDao.getGroupsByFollower_id(follower_id);
-        return changeToString(all);
+        return changeToString(checkGroupTime(all,true));
     }
 
     @Override

@@ -45,4 +45,6 @@ public class Group {
     @Column(name = "link")
     private String link;
 
+    @Transient
+    private int state;
 }
