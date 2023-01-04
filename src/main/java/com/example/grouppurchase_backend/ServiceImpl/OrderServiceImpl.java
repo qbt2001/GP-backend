@@ -10,6 +10,8 @@ import com.example.grouppurchase_backend.Dao.UserDao;
 import com.example.grouppurchase_backend.Entity.Group;
 import com.example.grouppurchase_backend.Entity.Order;
 import com.example.grouppurchase_backend.Entity.User;
+import com.example.grouppurchase_backend.Repository.OrderRepository;
+import com.example.grouppurchase_backend.Repository.UserRepository;
 import com.example.grouppurchase_backend.Service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,12 @@ public class OrderServiceImpl implements OrderService {
     UserDao userDao;
     @Autowired
     CommodityDao commodityDao;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public String createOrder(int commodity_id, int user_id, int commodity_amount, String pay_time) {
@@ -231,12 +239,17 @@ public class OrderServiceImpl implements OrderService {
         if (userBalance<money)
             return "balance";
 
+        user.setBalance(userBalance-money);
+        userRepository.save(user);
+
         Group group=groupDao.getGroupByGroup_id(order.getGroup_id());
         User head=userDao.findByUser_id(group.getHead());
         int headBalance=head.getBalance();
-        user.setBalance(userBalance-money);
         head.setBalance(headBalance+money);
+        userRepository.save(head);
+
         order.setIspaid(1);
+        orderRepository.save(order);
         return "success";
     }
 
