@@ -48,13 +48,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String GetOrdersByUser_id(int user_id) {
         List<Order> all = orderDao.getAllUserOrders(user_id);
-        for (int i = 0; i < all.size(); i++) {
-            Order order = all.get(i);
-            if (order.getIspaid() == 0) {
-                all.remove(order);
-                i--;
-            }
-        }
+
         ArrayList<JSONArray> orderJson = new ArrayList<>();
         ArrayList<String> num = new ArrayList<>();
         num.add(String.valueOf(all.size()));
@@ -101,13 +95,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String GetOrdersByGroup_id(int group_id) {
         List<Order> all = orderDao.getAllGroupOrders(group_id);
-        for (int i = 0; i < all.size(); i++) {
-            Order order = all.get(i);
-            if (order.getIspaid() == 0) {
-                all.remove(order);
-                i--;
-            }
-        }
+
         ArrayList<JSONArray> orderJson = new ArrayList<>();
         ArrayList<String> num = new ArrayList<>();
         num.add(String.valueOf(all.size()));
@@ -160,26 +148,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String GetOrderAmountByUser_id(int user_id) {
         List<Order> all = orderDao.getAllUserOrders(user_id);
-        for (int i = 0; i < all.size(); i++) {
-            Order order = all.get(i);
-            if (order.getIspaid() == 0) {
-                all.remove(order);
-                i--;
-            }
-        }
+
         return String.valueOf(all.size());
     }
 
     @Override
     public String GetOrderTotalByUser_id(int user_id) {
         List<Order> all = orderDao.getAllUserOrders(user_id);
-        for (int i = 0; i < all.size(); i++) {
-            Order order = all.get(i);
-            if (order.getIspaid() == 0) {
-                all.remove(order);
-                i--;
-            }
-        }
+
         int TotalMoney = 0;
         for (int i = 0; i < all.size(); i++)
             TotalMoney += all.get(i).getMoney();
@@ -189,26 +165,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public String GetOrderAmountByGroup_id(int group_id) {
         List<Order> all = orderDao.getAllGroupOrders(group_id);
-        for (int i = 0; i < all.size(); i++) {
-            Order order = all.get(i);
-            if (order.getIspaid() == 0) {
-                all.remove(order);
-                i--;
-            }
-        }
+
         return String.valueOf(all.size());
     }
 
     @Override
     public String GetOrderTotalByGroup_id(int group_id) {
         List<Order> all = orderDao.getAllGroupOrders(group_id);
-        for (int i = 0; i < all.size(); i++) {
-            Order order = all.get(i);
-            if (order.getIspaid() == 0) {
-                all.remove(order);
-                i--;
-            }
-        }
+
         int TotalMoney = 0;
         for (int i = 0; i < all.size(); i++) {
             TotalMoney += all.get(i).getMoney();
